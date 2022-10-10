@@ -1,9 +1,13 @@
 module Parser
-    ( Parser
+    (
+        Parser,
+        parse,
+        parseProgram
     ) where
 
 import Data.Char
 import Control.Applicative
+import Syntax ( Term(TermFalse), Term(TermTrue) )
 
 -- Parser type
 newtype Parser a = Parser(String -> [(a, String)])
@@ -122,28 +126,20 @@ token p = do
 symbol :: String -> Parser String
 symbol xs = token (string xs)
 
-expr :: Parser Int
-expr = do t <- term
-          do symbol "+"
-             e <- expr
-             return (t + e)
-           <|> return t
+-- program := true | false
 
-term :: Parser Int
-term = do f <- factor
-          do symbol "*"
-             t <- term
-             return (f * t)
-           <|> return f
+parseTrue :: Parser Term
+parseTrue = do
+    _ <- symbol "true"
+    return TermTrue
 
-factor :: Parser Int
-factor = do symbol "("
-            e <- expr
-            symbol ")"
-            return e
-           <|> nat
-    
-eval' :: String -> Int
-eval' xs = case (parse expr xs) of
-    [(n, _)]  -> n
-    []         -> error ("fds")
+parseFalse :: Parser Term
+parseFalse = do
+    _ <- symbol "false"
+    return TermFalse
+
+parseProgram :: Parser Term
+parseProgram = do
+    parseTrue
+    <|>
+    parseFalse
