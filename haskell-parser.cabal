@@ -25,6 +25,7 @@ source-repository head
 library
   exposed-modules:
       Lib
+      Parser
   other-modules:
       Paths_haskell_parser
   hs-source-dirs:
