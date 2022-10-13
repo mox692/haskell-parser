@@ -5,3 +5,7 @@
   * parserはそれぞれTermTrue, TermFalse, TermIfといった `Term` を返すように 
 * evalを書く.
   * `eval` は Term を受け取って、各Termに応じた計算を行い、valueを返す.
+
+TODO:
+* ifの構文をparseできるように
+* チャーチ数的な、整数をparseを公文に入れる

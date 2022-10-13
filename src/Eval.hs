@@ -1,6 +1,6 @@
 module Eval
     (
-        eval
+      eval
     ) where
 
 import Syntax ( Term(TermFalse), Term(TermTrue), Term(TermUnknown) )

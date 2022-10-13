@@ -7,7 +7,7 @@ module Parser
 
 import Data.Char
 import Control.Applicative
-import Syntax ( Term(TermFalse), Term(TermTrue) )
+import Syntax ( Term(TermFalse, TermUnknown), Term(TermTrue) )
 
 -- Parser type
 newtype Parser a = Parser(String -> [(a, String)])
@@ -138,8 +138,23 @@ parseFalse = do
     _ <- symbol "false"
     return TermFalse
 
+parseIf :: Parser Term
+parseIf = do
+    _ <- symbol "if"
+    cond <- parseTrue <|> parseFalse
+    _ <- symbol "then"
+    thn <- parseTrue <|> parseFalse
+    _ <- symbol "else"
+    els <- parseTrue <|> parseFalse
+    case cond of
+        TermTrue  -> return thn
+        TermFalse -> return els
+        _         -> return TermUnknown
+
 parseProgram :: Parser Term
 parseProgram = do
     parseTrue
     <|>
     parseFalse
+    <|>
+    parseIf

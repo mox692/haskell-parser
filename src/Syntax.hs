@@ -5,5 +5,6 @@ module Syntax
 
 data Term = TermTrue
           | TermFalse
+          | TermIf(Term, Term, Term)
           | TermUnknown
           deriving Show
