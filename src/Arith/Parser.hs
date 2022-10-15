@@ -1,4 +1,4 @@
-module Parser
+module Arith.Parser
     (
         Parser,
         parse,
@@ -7,7 +7,7 @@ module Parser
 
 import Data.Char
 import Control.Applicative
-import Syntax ( Term(TermFalse, TermUnknown), Term(TermTrue) )
+import Arith.Syntax ( Term(TermFalse, TermUnknown), Term(TermTrue) )
 
 -- Parser type
 newtype Parser a = Parser(String -> [(a, String)])

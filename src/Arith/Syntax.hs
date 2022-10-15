@@ -1,4 +1,4 @@
-module Syntax
+module Arith.Syntax
    (
     Term(TermTrue, TermFalse, TermUnknown)
    ) where 

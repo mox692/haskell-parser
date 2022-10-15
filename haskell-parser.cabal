@@ -24,9 +24,10 @@ source-repository head
 
 library
   exposed-modules:
-      Eval
-      Parser
-      Syntax
+      Arith.Eval
+      Arith.Main
+      Arith.Parser
+      Arith.Syntax
   other-modules:
       Paths_haskell_parser
   hs-source-dirs:

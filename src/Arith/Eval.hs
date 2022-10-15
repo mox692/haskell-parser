@@ -1,9 +1,9 @@
-module Eval
+module Arith.Eval
     (
       eval
     ) where
 
-import Syntax ( Term(TermFalse), Term(TermTrue), Term(TermUnknown) )
+import Arith.Syntax ( Term(TermFalse), Term(TermTrue), Term(TermUnknown) )
 
 eval :: [(Term, String)] -> Term
 eval t = case t of
