@@ -3,6 +3,7 @@ import Arith.Eval
 import Arith.Parser
 import Arith.Syntax
 import Text.Printf
+import Syntax (Term(TermFalse, TermTrue))
 
 --
 -- Arith
@@ -23,6 +24,18 @@ arithTestCase =
         ("@@@", TermUnknown)
     ]
  
+--
+-- Lambda
+--
+lambdaTestCase :: [(String, Term)]
+lambdaTestCase =
+    [
+        ("λx.x", TermValue("λx.x")),
+        ("λx.x y", TermValue("y")),
+        ("λx.xyz a", TermValue("ayz")),
+        ("λx.λy.xy a", TermValue("λy.ay"))
+    ]
+
 main :: IO ()
 main = do
     putStrLn "test Start"

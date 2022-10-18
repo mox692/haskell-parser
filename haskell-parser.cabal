@@ -28,6 +28,8 @@ library
       Arith.Main
       Arith.Parser
       Arith.Syntax
+      Lambda.Parser
+      Lambda.Syntax
   other-modules:
       Paths_haskell_parser
   hs-source-dirs:
