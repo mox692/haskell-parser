@@ -4,6 +4,9 @@ module Lambda.Parser
     ) where
 
 import Control.Applicative
+import Data.Char
+import Text.Printf
+import Lambda.Syntax (Term(TermAbs), Term(TermVal), Term(TermAp))
 
 newtype Parser a = Parser(String -> [(a, String)])
 
@@ -54,8 +57,13 @@ item = Parser(\s -> case s of
     h:t -> [(h, t)]
     )
 
-isChar :: Char -> Parser Char
-isChar c = Parser(\s -> case s of
+isChar :: Parser Char
+isChar = do
+    c <- item
+    if isAlpha c then return c else empty
+
+isMatchChar :: Char -> Parser Char
+isMatchChar c = Parser(\s -> case s of
     [] -> []
     h:t -> if h == c then [(h, t)] else [])
 
@@ -76,27 +84,36 @@ isWhite = do
     c <- item
     if c == ' ' then return c else empty
 
-isStr :: String -> Parser String
-isStr str = case str of
+isMatchStr :: String -> Parser String
+isMatchStr str = case str of
     [] -> return []
     h:t -> do
         _ <- many isWhite
-        _ <- isChar h
-        _ <- isStr t
+        _ <- isMatchChar h
+        _ <- isMatchStr t
         return $ h:t
 
-    -- h:t -> do
-    --     _ <- isChar h
-    --     _ <- isStr t
-    --     return (h:t))
+symbol :: Parser String
+symbol = do many isChar
 
--- 特定の単語まで読み進めるParser
+parseLambdaVal :: Parser Term
+parseLambdaVal = do 
+    _ <- many isWhite
+    TermVal <$> symbol
 
-parseLambdaAbs :: Parser String
-parseLambdaAbs = Parser(\s -> [])
+-- TODO: 複数引数に対応
+parseLambdaAbs :: Parser Term
+parseLambdaAbs = do
+    _ <- isMatchStr "λ"
+    c <- symbol
+    _ <- isMatchChar '.'
+    t <- parseLambdaAbs
+         <|>
+         parseLambdaVal
+    return  (TermAbs (c, t))
 
-parseLambdaVal :: Parser String
-parseLambdaVal = Parser(\s -> [])
-
-parseLambdaApp :: Parser String
-parseLambdaApp = Parser(\s -> [])
+parseLambdaApp :: Parser Term
+parseLambdaApp = do
+    ab <- parseLambdaAbs
+    val <- many parseLambdaVal
+    return $ TermAp (ab, val)
