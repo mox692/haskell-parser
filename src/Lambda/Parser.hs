@@ -35,3 +35,47 @@ instance Monad Parser where
     (>>=) a f = Parser(\s -> case parse a s of
         [] -> []
         [(a', s')] -> parse (f a') s')
+
+-- 1文字読んでそれを結果として返すだけのparser
+item :: Parser Char
+item = Parser(\s -> case s of
+    [] -> []
+    h:t -> [(h, t)]
+    )
+
+isChar :: Char -> Parser Char
+isChar c = Parser(\s -> case s of
+    [] -> []
+    h:t -> if h == c then [(h, t)] else [])
+
+-- isChar' :: Char -> Bool
+-- isChar' c = 
+
+-- isStr :: String -> Parser String
+-- isStr str = Parser(\s -> case s of
+--     []  -> []
+--     h:t -> case str of
+--         [] -> []
+--         h':t' ->
+--             if h == h'
+--             then isStr t
+--             else []
+--         -- [()]　を返す
+--     )
+
+
+    -- h:t -> do
+    --     _ <- isChar h
+    --     _ <- isStr t
+    --     return (h:t))
+
+-- 特定の単語まで読み進めるParser
+
+parseLambdaAbs :: Parser String
+parseLambdaAbs = Parser(\s -> [])
+
+parseLambdaVal :: Parser String
+parseLambdaVal = Parser(\s -> [])
+
+parseLambdaApp :: Parser String
+parseLambdaApp = Parser(\s -> [])

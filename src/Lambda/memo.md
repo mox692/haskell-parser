@@ -22,3 +22,6 @@
 * lambda計算とはいえ、考えうる算術を全てsupportする良いうよりは色々前提をおかないといけないかもしれない
   * 評価戦略とか
   * 関数適用は左結合であるとか
+
+* multibyte charの情報源
+  * https://stackoverflow.com/questions/36159921/haskell-convert-string-with-unicode-characters-to-chunks-of-64-bits
