@@ -3,6 +3,8 @@ module Lambda.Parser
 
     ) where
 
+import Control.Applicative
+
 newtype Parser a = Parser(String -> [(a, String)])
 
 -- helper
@@ -36,6 +38,15 @@ instance Monad Parser where
         [] -> []
         [(a', s')] -> parse (f a') s')
 
+instance Alternative Parser where
+    -- empty :: Parser a
+    -- (<|>) :: Parser a -> Parser a -> Parser a
+    empty = Parser(const [])
+    (<|>) p1 p2 = Parser(\s -> case parse p1 s of
+        [] -> parse p2 s
+        pair -> pair)
+
+
 -- 1文字読んでそれを結果として返すだけのparser
 item :: Parser Char
 item = Parser(\s -> case s of
@@ -48,9 +59,7 @@ isChar c = Parser(\s -> case s of
     [] -> []
     h:t -> if h == c then [(h, t)] else [])
 
--- isChar' :: Char -> Bool
--- isChar' c = 
-
+-- 失敗作
 -- isStr :: String -> Parser String
 -- isStr str = Parser(\s -> case s of
 --     []  -> []
@@ -59,10 +68,22 @@ isChar c = Parser(\s -> case s of
 --         h':t' ->
 --             if h == h'
 --             then isStr t
---             else []
---         -- [()]　を返す
---     )
+--             else [])
+        -- [()]　を返す)
 
+isWhite :: Parser Char
+isWhite = do
+    c <- item
+    if c == ' ' then return c else empty
+
+isStr :: String -> Parser String
+isStr str = case str of
+    [] -> return []
+    h:t -> do
+        _ <- many isWhite
+        _ <- isChar h
+        _ <- isStr t
+        return $ h:t
 
     -- h:t -> do
     --     _ <- isChar h
