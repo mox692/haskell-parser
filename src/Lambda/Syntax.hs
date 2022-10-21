@@ -1,9 +1,10 @@
 module Lambda.Syntax
     (
-     Term(TermAbs, TermAp, TermVal)
+     TermLambda(TermAbs, TermAp, TermVal, TermUnknown)
     ) where
 
-data Term = TermVal String    -- 変数名
-            | TermAbs (String, Term)  -- 引数名、式の中
-            | TermAp (Term, [Term]) -- TermAbs、代入する値
-            deriving Show
+data TermLambda = TermVal String    -- 変数名
+                | TermAbs (String, TermLambda)  -- 引数名、式の中
+                | TermAp (TermLambda, [TermLambda]) -- TermAbs、代入する値
+                | TermUnknown
+                deriving (Show, Eq)

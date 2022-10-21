@@ -28,6 +28,7 @@ library
       Arith.Main
       Arith.Parser
       Arith.Syntax
+      Lambda.Eval
       Lambda.Parser
       Lambda.Syntax
   other-modules:
