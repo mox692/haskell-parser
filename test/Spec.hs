@@ -33,7 +33,7 @@ lambdaAssert :: (String, TermLambda) -> String
 lambdaAssert pair
     | got == expected = "✅ OK"
     | otherwise = printf "❌ Expect %s, but got %s" (show expected) (show got)
-    where got = evalLambda $ parseLambda parseLambdaAbs input
+    where got = evalLambda $ parseLambda parseLambdaProgram input
           (input , expected) = pair
 
 
@@ -42,7 +42,7 @@ lambdaTestCase =
     [
         ("λx.x", TermAbs("x", TermVal "x")),
         ("λx.y", TermAbs("x", TermVal "y"))
-        -- ("λx.x y", TermValue("y"))
+        -- ("λx.x y", TermAbs("y", TermVal ""))
         -- ("λx.xyz a", TermValue("ayz")),
         -- ("λx.λy.xy a", TermValue("λy.ay"))
     ]

@@ -2,7 +2,8 @@ module Lambda.Parser
     (
 parseLambda,
 parseLambdaAbs,
-parseLambdaApp
+parseLambdaApp,
+parseLambdaProgram
     ) where
 
 import Control.Applicative
@@ -64,6 +65,11 @@ isChar = do
     c <- item
     if isAlpha c then return c else empty
 
+startsWith :: Char -> String -> Bool
+startsWith c s = case s of
+    h:_ -> h == c
+    _   -> False
+
 isMatchChar :: Char -> Parser Char
 isMatchChar c = Parser(\s -> case s of
     [] -> []
@@ -101,7 +107,11 @@ symbol = do many isChar
 parseLambdaVal :: Parser TermLambda
 parseLambdaVal = do 
     _ <- many isWhite
-    TermVal <$> symbol
+    sym <- symbol
+    -- TODO: もう少し綺麗に描きたい.
+    if startsWith 'λ' sym
+    then empty
+    else return $ TermVal sym
 
 -- TODO: 複数引数に対応
 parseLambdaAbs :: Parser TermLambda
@@ -119,3 +129,11 @@ parseLambdaApp = do
     ab <- parseLambdaAbs
     val <- many parseLambdaVal
     return $ TermAp (ab, val)
+
+parseLambdaProgram ::  Parser TermLambda
+parseLambdaProgram = do
+    parseLambdaVal
+    <|>
+    parseLambdaAbs
+    <|>
+    parseLambdaApp
