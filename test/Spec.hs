@@ -2,7 +2,7 @@
 import Arith.Eval
 import Arith.Parser
 import Arith.Syntax ( Term(TermFalse), Term(TermUnknown), Term(TermTrue) )
-import Lambda.Syntax (TermLambda(TermAbs), TermLambda(TermVal), TermLambda(LambdaTermUnknown))
+import Lambda.Syntax (TermLambda(TermAbs), TermLambda(TermVal), TermLambda(LambdaTermUnknown), TermLambda(TermVal2), TermLambda(TermEmpty))
 import Lambda.Parser
 import Lambda.Eval
 import Text.Printf
@@ -47,8 +47,14 @@ lambdaTestCase =
 
         -- Lambda Abs
         ("A TermAbs is parsed correctly 1", "λx.x", TermAbs("x", TermVal "x")),
-        ("A TermAbs is parsed correctly 2", "λx.y", TermAbs("x", TermVal "y"))
-        -- ("λx.xyz a", TermValue("ayz")),
+        ("A TermAbs is parsed correctly 2", "λx.y", TermAbs("x", TermVal "y")),
+        ("A nested TermAbs is parsed correctly 1", "λx.λy.xy", TermAbs("x", TermAbs ("y", TermVal "xy"))),
+        -- ("A nested TermAbs is parsed correctly 2", "λx.x λy.x y", TermAbs("x", TermAbs ("y", TermVal "xy")))
+
+        -- Lambda App
+        ("A Lambda App is parsed correctly 1", "(λx.x) t", TermVal("t")),
+        ("A Lambda App is parsed correctly 2", "(λx.x) t u", TermVal("t u")),
+        ("A Lambda App is parsed correctly 3", "(λx.λy.λz x y z) s t", TermAbs("z", TermVal2 ("s", TermEmpty)))  -- λz. s t z
         -- ("λx.λy.xy a", TermValue("λy.ay"))
     ]
 
