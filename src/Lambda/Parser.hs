@@ -8,7 +8,7 @@ parseLambdaProgram
 
 import Control.Applicative
 import Data.Char
-import Text.Printf
+import Text.Printf()
 import Lambda.Syntax (TermLambda(TermAbs), TermLambda(TermVal), TermLambda(TermAp))
 
 newtype Parser a = Parser(String -> [(a, String)])
@@ -21,8 +21,8 @@ parseLambda p = case p of
 instance Functor Parser where
     -- fmap :: (a -> b) -> Parser a -> Parser b
     fmap f p = Parser(\s -> case parseLambda p s of
-            []        -> []
             [(a, s')] -> [(f a, s')]
+            _        -> []
         )
 
 instance Applicative Parser where
@@ -30,10 +30,10 @@ instance Applicative Parser where
     -- (<*>) :: Parser (a -> b) -> Parser a -> Parser b
     pure a = Parser(\s -> [(a, s)])
     (<*>) f a = Parser(\s -> case parseLambda f s of
-        [] -> []
         [(f', s')] -> case parseLambda a s' of
-            [] -> []
             [(a', s'')] -> [(f' a', s'')]
+            _ -> []
+        _ -> []
         )
 
 instance Monad Parser where
@@ -41,8 +41,8 @@ instance Monad Parser where
     -- (>>=)  :: Parser a -> (a -> Parser b) -> Parser b
     return a = Parser(\s -> [(a, s)])
     (>>=) a f = Parser(\s -> case parseLambda a s of
-        [] -> []
-        [(a', s')] -> parseLambda (f a') s')
+        [(a', s')] -> parseLambda (f a') s'
+        _ -> [])
 
 instance Alternative Parser where
     -- empty :: Parser a
