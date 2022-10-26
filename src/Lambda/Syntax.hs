@@ -1,6 +1,7 @@
 module Lambda.Syntax
     (
      TermLambda(TermAbs, TermAp, TermVal, LambdaTermUnknown, TermVal2, TermEmpty),
+     getTermVal
     ) where
 
 data TermLambda = TermVal String    -- 変数名
@@ -10,3 +11,7 @@ data TermLambda = TermVal String    -- 変数名
                 | TermEmpty
                 | LambdaTermUnknown
                 deriving (Show, Eq)
+
+getTermVal :: TermLambda -> String
+getTermVal (TermVal str) = str
+getTermVal _ = ""

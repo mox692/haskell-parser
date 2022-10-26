@@ -41,20 +41,22 @@ lambdaTestCase :: [(String, String, TermLambda)]
 lambdaTestCase =
     [
         -- Lambda Val
-        ("A TermVal is parsed correctly", "x",  TermVal "x"),
-        ("A TermVal is parsed correctly", "foo",  TermVal "foo"),
+        ("A TermVal is parsed correctly1", "x",  TermVal2 ("x", TermEmpty)),
+        ("A TermVal is parsed correctly2", "foo",  TermVal2 ("foo", TermEmpty)),
+        ("A TermVal is parsed correctly3", "x y z",  TermVal2 ("x", TermVal2 ("y", TermVal2("z" , TermEmpty)))),
         ("A invalid TermVal is parsed correctly", "λaaa",  LambdaTermUnknown),
 
         -- Lambda Abs
-        ("A TermAbs is parsed correctly 1", "λx.x", TermAbs("x", TermVal "x")),
-        ("A TermAbs is parsed correctly 2", "λx.y", TermAbs("x", TermVal "y")),
-        ("A nested TermAbs is parsed correctly 1", "λx.λy.xy", TermAbs("x", TermAbs ("y", TermVal "xy"))),
+        ("A TermAbs is parsed correctly 1", "λx.x", TermAbs("x", TermVal2 ("x", TermEmpty))),
+        ("A TermAbs is parsed correctly 2", "λx. y", TermAbs("x", TermVal2 ("y", TermEmpty))),
+        ("A nested TermAbs is parsed correctly 1", "λx.λy.x y", TermAbs("x", TermAbs ("y", TermVal2 ("x", TermVal2 ("y", TermEmpty))))),
         -- ("A nested TermAbs is parsed correctly 2", "λx.x λy.x y", TermAbs("x", TermAbs ("y", TermVal "xy")))
 
         -- Lambda App
-        ("A Lambda App is parsed correctly 1", "(λx.x) t", TermVal("t")),
-        ("A Lambda App is parsed correctly 2", "(λx.x) t u", TermVal("t u")),
-        ("A Lambda App is parsed correctly 3", "(λx.λy.λz x y z) s t", TermAbs("z", TermVal2 ("s", TermEmpty)))  -- λz. s t z
+        ("A Lambda App is parsed correctly 1", "(λx.x) t", TermVal "t"),
+        ("A Lambda App is parsed correctly 2", "(λx.x) t u", TermVal "t u"),
+        ("A Lambda App is parsed correctly 3", "(λx.λy.λz x y z) s t", TermAbs("z", TermVal2 ("s", TermEmpty))),  -- λz. s t z
+        ("A Lambda App is parsed correctly 4", "(λx.x) (λy.x y) u", TermAbs("y", TermVal2 ("u", TermVal2("y", TermEmpty)))) -- λy.u y
         -- ("λx.λy.xy a", TermValue("λy.ay"))
     ]
 

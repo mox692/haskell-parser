@@ -9,7 +9,7 @@ parseLambdaProgram
 import Control.Applicative
 import Data.Char
 import Text.Printf()
-import Lambda.Syntax (TermLambda(TermAbs), TermLambda(TermVal), TermLambda(TermAp))
+import Lambda.Syntax (TermLambda(TermAbs, TermEmpty, TermVal2), TermLambda(TermVal), TermLambda(TermAp), TermLambda(TermVal2), getTermVal)
 
 newtype Parser a = Parser(String -> [(a, String)])
 
@@ -109,9 +109,25 @@ parseLambdaVal = do
     _ <- many isWhite
     sym <- symbol
     -- TODO: もう少し綺麗に描きたい.
-    if startsWith 'λ' sym
+    if startsWith 'λ' sym || (sym == "")
     then empty
     else return $ TermVal sym
+
+parseLambdaVals :: Parser [TermLambda]
+parseLambdaVals = many parseLambdaVal -- MEMO: ここ
+
+joinVals :: [TermLambda] -> TermLambda
+joinVals vals = case vals of
+    h:t -> TermVal2 (getTermVal h, joinVals t)
+    _ -> TermEmpty
+
+parseVal :: Parser TermLambda
+parseVal = do 
+    -- TODO: ここをもう少し綺麗に
+    res <- joinVals <$> parseLambdaVals
+    if res == TermEmpty
+    then empty
+    else return res
 
 -- TODO: 複数引数に対応
 parseLambdaAbs :: Parser TermLambda
@@ -121,18 +137,20 @@ parseLambdaAbs = do
     _ <- isMatchChar '.'
     t <- parseLambdaAbs
          <|>
-         parseLambdaVal
+         parseVal
     return  (TermAbs (c, t))
 
 parseLambdaApp :: Parser TermLambda
 parseLambdaApp = do
+    _ <- isMatchChar '('
     ab <- parseLambdaAbs
+    _ <- isMatchChar ')'
     val <- many parseLambdaVal
     return $ TermAp (ab, val)
 
 parseLambdaProgram ::  Parser TermLambda
 parseLambdaProgram = do
-    parseLambdaVal
+    parseVal -- MEMO: これがAbsを食べてしまってる
     <|>
     parseLambdaAbs
     <|>
