@@ -9,7 +9,7 @@ parseLambdaProgram
 import Control.Applicative
 import Data.Char
 import Text.Printf()
-import Lambda.Syntax (TermLambda(TermAbs, TermEmpty, TermVal2), TermLambda(TermVal), TermLambda(TermAp), TermLambda(TermVal2), getTermVal)
+import Lambda.Syntax (TermLambda(TermAbs, TermEmpty, TermVals), TermLambda(TermVal), TermLambda(TermAp), TermLambda(TermVals), getTermVal)
 
 newtype Parser a = Parser(String -> [(a, String)])
 
@@ -118,7 +118,7 @@ parseLambdaVals = many parseLambdaVal -- MEMO: ここ
 
 joinVals :: [TermLambda] -> TermLambda
 joinVals vals = case vals of
-    h:t -> TermVal2 (getTermVal h, joinVals t)
+    h:t -> TermVals (getTermVal h, joinVals t)
     _ -> TermEmpty
 
 parseVal :: Parser TermLambda
