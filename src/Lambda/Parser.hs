@@ -3,15 +3,21 @@ module Lambda.Parser
 parseLambda,
 parseLambdaAbs,
 parseLambdaApp,
+getTermLambda,
 parseLambdaProgram
     ) where
 
 import Control.Applicative
 import Data.Char
 import Text.Printf()
-import Lambda.Syntax (TermLambda(TermAbs, TermEmpty, TermVals), TermLambda(TermVal), TermLambda(TermAp), TermLambda(TermVals), getTermVal)
+import Lambda.Syntax (TermLambda(TermAbs, TermEmpty, TermVals), TermLambda(TermVal), TermLambda(TermAp), TermLambda(TermVals), TermLambda(LambdaTermUnknown), getTermVal)
 
 newtype Parser a = Parser(String -> [(a, String)])
+
+getTermLambda :: [(TermLambda, String)] -> TermLambda
+getTermLambda a = case a of
+    [(t, _)] -> t
+    _ -> LambdaTermUnknown
 
 -- helper
 parseLambda :: Parser a -> String -> [(a, String)]
